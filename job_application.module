@@ -4,3 +4,56 @@
  * @file
  * Primary module hooks for Job application module.
  */
+
+  /**
+   * Implements hook_schema().
+   */
+  function job_application_schema()
+  {
+    $schema = [];
+
+    $schema['job_applications'] = [
+      'description' => 'Data from application job form',
+      'fields' => [
+        'jaid' => [
+          'type' => 'serial',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'description' => 'Job Applicant ID',
+        ],
+        'name' => [
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'description' => 'Applicant name',
+        ],
+        'mail' => [
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'description' => 'Applicant email',
+        ],
+        'type' => [
+          'type' => 'varchar',
+          'length' => 16,
+          'not null' => TRUE,
+          'description' => 'Backend or Frontend',
+        ],
+        'technology' => [
+          'type' => 'varchar',
+          'length' => 16,
+          'not null' => TRUE,
+          'description' => 'Backend or Frontend technologies',
+        ],
+        'message' => [
+          'type' => 'text',
+          'description' => 'Message for employer',
+        ],
+
+      ],
+      'primary key' => ['jaid'],
+    ];
+
+    return $schema;
+  }
+  

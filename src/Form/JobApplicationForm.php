@@ -89,6 +89,11 @@ final class JobApplicationForm extends FormBase {
       ],
     ];
 
+    $form['message'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Message'),
+    ];
+
     return $form;
   }
 
