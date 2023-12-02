@@ -1,5 +1,7 @@
 name: 'Job application'
 type: module
-description: 'Webform for job applications that stores data in a SQL database and sends it to the designated email on our website.'
+description: 'Webform for job applications that stores data in a SQL database and sends it to the main email on website.'
 package: Custom
 core_version_requirement: ^10
+dependencies:
+  - mailsystem:mailsystem

@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Database\Connection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Mail\MailManagerInterface;
 
 /**
  * Provides a Job application form.
@@ -21,13 +22,17 @@ final class JobApplicationForm extends FormBase {
 
   protected $database;
 
-  public function __construct(Connection $database) {
+  protected $mailManager;
+
+  public function __construct(Connection $database, MailManagerInterface $mail_manager) {
     $this->database = $database;
+    $this->mailManager = $mail_manager;
   }
 
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('database')
+      $container->get('database'),
+      $container->get('plugin.manager.mail')
     );
   }
 
@@ -123,6 +128,7 @@ final class JobApplicationForm extends FormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
 
+    //validate email
     $email = $form_state->getValue('email');
 
     if ($email == !\Drupal::service('email.validator')->isValid($email)) {
@@ -141,6 +147,7 @@ final class JobApplicationForm extends FormBase {
     $technology = $form_state->getValue('type') == 'Backend' ? $form_state->getValue('technology_backend') : $form_state->getValue('technology_frontend');
     $message = $form_state->getValue('message');
 
+    //save all date to database
     $this->database->insert('job_applications')
       ->fields([
         'name' => $name,
@@ -150,6 +157,26 @@ final class JobApplicationForm extends FormBase {
         'message' => $message,
       ])
       ->execute();
+
+    // Get main site mail
+    $site_config = \Drupal::config('system.site');
+    $site_mail = $site_config->get('mail');
+
+    $langcode = \Drupal::currentUser()->getPreferredLangcode();
+
+    //Send data to main site email
+    $params = [
+      'subject' => 'New Job Application',
+      'body' => $this->t('A new job application has been submitted.<br> Details: <br>Name: @name <br>Email: @email <br>Type: @type <br>Technology: @technology <br>Message: @message', [
+        '@name' => $name,
+        '@email' => $email,
+        '@type' => $type,
+        '@technology' => $technology,
+        '@message' => $message,
+      ]),
+    ];
+
+    $this->mailManager->mail('job_application', 'job_application_submission', $site_mail, $langcode, $params);
 
     $this->messenger()->addStatus($this->t('The job application has been sent.'));
     $form_state->setRedirect('<front>');
