@@ -44,6 +44,10 @@
         '#rows' => $rows,
       ];
 
+      $form['pager'] = [
+        '#type' => 'pager',
+      ];
+
       return $form;
     }
 
