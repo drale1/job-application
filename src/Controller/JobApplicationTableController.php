@@ -5,19 +5,25 @@
   use Drupal\Core\Controller\ControllerBase;
   use Drupal\Core\Database\Connection;
   use Symfony\Component\DependencyInjection\ContainerInterface;
+  use Drupal\Core\Database\Query\PagerSelectExtender;
+  use Drupal\Core\Database\Query\TableSortExtender;
+
 
   /**
    * Controller for the Job Applications table.
    */
-  class JobApplicationTableController extends ControllerBase {
+  class JobApplicationTableController extends ControllerBase
+  {
 
     protected $database;
 
-    public function __construct(Connection $database) {
+    public function __construct(Connection $database)
+    {
       $this->database = $database;
     }
 
-    public static function create(ContainerInterface $container) {
+    public static function create(ContainerInterface $container)
+    {
       return new static(
         $container->get('database')
       );
@@ -26,7 +32,11 @@
     /**
      * Display the Job Applications table.
      */
-    public function content() {
+    /**
+     * Display the Job Applications table with pagination and sorting.
+     */
+    public function content()
+    {
       $header = [
         'id' => $this->t('Id'),
         'name' => $this->t('Name'),
@@ -36,7 +46,19 @@
         'message' => $this->t('Message'),
       ];
 
-      $rows = $this->jobApplicationGetDataFromDatabase();
+      $query = $this->database->select('job_applications', 'ja')
+        ->fields('ja')
+        ->extend(TableSortExtender::class)
+        ->orderByHeader($header)
+        ->extend(PagerSelectExtender::class)
+        ->limit(5);
+
+      $result = $query->execute();
+
+      $rows = [];
+      foreach ($result as $row) {
+        $rows[] = (array)$row;
+      }
 
       $form['table'] = [
         '#theme' => 'table',
@@ -49,22 +71,5 @@
       ];
 
       return $form;
-    }
-
-    /**
-     * Get data from the job_applications table.
-     */
-    protected function jobApplicationGetDataFromDatabase() {
-      $query = $this->database->select('job_applications', 'ja')
-        ->fields('ja')
-        ->execute();
-
-      $data = $query->fetchAllAssoc('jaid');
-
-      $data = array_map(function ($row) {
-        return (array) $row;
-      }, $data);
-
-      return $data;
     }
   }
