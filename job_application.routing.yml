@@ -5,3 +5,12 @@ job_application.form:
     _form: 'Drupal\job_application\Form\JobApplicationForm'
   requirements:
     _permission: 'access content'
+
+job_application.admin_table:
+  path: '/admin/job-applications'
+  defaults:
+    _controller: '\Drupal\job_application\Controller\JobApplicationTableController::content'
+    _title: 'Job Applications'
+  requirements:
+    _permission: 'administer site configuration'
+

@@ -181,5 +181,5 @@ final class JobApplicationForm extends FormBase {
     $this->messenger()->addStatus($this->t('The job application has been sent.'));
     $form_state->setRedirect('<front>');
   }
-
 }
+
