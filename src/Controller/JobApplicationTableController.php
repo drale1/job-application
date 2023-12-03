@@ -1,13 +1,12 @@
 <?php
 
-	namespace Drupal\job_application\Controller;
+  namespace Drupal\job_application\Controller;
 
   use Drupal\Core\Controller\ControllerBase;
   use Drupal\Core\Database\Connection;
   use Symfony\Component\DependencyInjection\ContainerInterface;
   use Drupal\Core\Database\Query\PagerSelectExtender;
   use Drupal\Core\Database\Query\TableSortExtender;
-
 
   /**
    * Controller for the Job Applications table.
@@ -30,19 +29,31 @@
     }
 
     /**
-     * Display the Job Applications table.
-     */
-    /**
      * Display the Job Applications table with pagination and sorting.
      */
     public function content()
     {
       $header = [
-        'id' => $this->t('Id'),
-        'name' => $this->t('Name'),
-        'email' => $this->t('Email'),
-        'type' => $this->t('Type'),
-        'technology' => $this->t('Technology'),
+        'id' => [
+          'data' => $this->t('Id'),
+          'field' => 'jaid',
+        ],
+        'name' => [
+          'data' => $this->t('Name'),
+          'field' => 'name',
+        ],
+        'email' => [
+          'data' => $this->t('Email'),
+          'field' => 'mail',
+        ],
+        'type' => [
+          'data' => $this->t('Type'),
+          'field' => 'type',
+        ],
+        'technology' => [
+          'data' => $this->t('Technology'),
+          'field' => 'technology',
+        ],
         'message' => $this->t('Message'),
       ];
 
