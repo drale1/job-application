@@ -7,10 +7,18 @@ job_application.form:
     _permission: 'access content'
 
 job_application.admin_table:
-  path: '/admin/job-applications'
+  path: '/admin/job-applications/list'
   defaults:
     _controller: '\Drupal\job_application\Controller\JobApplicationTableController::content'
     _title: 'Job Applications'
   requirements:
     _permission: 'administer site configuration'
+
+job_application.email_send_settings:
+  path: '/admin/job-applications/email-form'
+  defaults:
+    _title: 'Email send settings'
+    _form: 'Drupal\job_application\Form\EmailSendSettingsForm'
+  requirements:
+    _permission: 'administer job application'
 

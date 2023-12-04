@@ -1,0 +1,4 @@
+administer job application:
+  title: 'Administer Job application'
+  description: 'Allows users to administer Job application email send form.'
+  restrict access: true

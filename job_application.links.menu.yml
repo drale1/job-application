@@ -1,0 +1,20 @@
+j_a_menu_link:
+  title: Job application
+  parent: system.admin
+  description: Job application settings
+  url: 'internal:#nolink'
+  weight: 10
+
+job_application.email_send_settings:
+  title: Email send settings
+  parent: j_a_menu_link
+  description: Email message for automatic sending job applicants
+  route_name: job_application.email_send_settings
+  weight: 10
+
+job_application.admin_table:
+  title: List
+  parent: j_a_menu_link
+  description: List of job applicants
+  route_name: job_application.admin_table
+  weight: 20

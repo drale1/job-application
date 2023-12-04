@@ -65,3 +65,12 @@
         break;
     }
   }
+
+  /**
+   * Implements hook_preprocess().
+   */
+  function job_application_preprocess(&$variables, $hook)
+  {
+    $current_route = \Drupal::routeMatch()->getRouteName();
+//    kint($current_route);
+  }
