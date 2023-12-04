@@ -55,6 +55,11 @@
           'field' => 'technology',
         ],
         'message' => $this->t('Message'),
+        'created' => [
+          'data' => $this->t('Sent'),
+          'field' => 'created',
+          'specifier' => 'long',
+        ],
       ];
 
       $query = $this->database->select('job_applications', 'ja')
@@ -68,7 +73,12 @@
 
       $rows = [];
       foreach ($result as $row) {
-        $rows[] = (array)$row;
+        $row = (array) $row;
+
+        // Format the created timestamp to a readable date-time format
+        $row['created'] = \Drupal::service('date.formatter')->format($row['created'], 'custom', 'Y-m-d H:i:s');
+
+        $rows[] = $row;
       }
 
       $form['table'] = [

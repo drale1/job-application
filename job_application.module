@@ -49,6 +49,11 @@
           'type' => 'text',
           'description' => 'Message for employer',
         ],
+        'created' => [
+          'type' => 'int',
+          'not null' => TRUE,
+          'description' => 'Timestamp when the record was created.',
+        ],
 
       ],
       'primary key' => ['jaid'],

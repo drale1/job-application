@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Database\Connection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
 
 /**
  * Provides a Job application form.
@@ -144,8 +145,10 @@ final class JobApplicationForm extends FormBase {
     $name = $form_state->getValue('name');
     $email = $form_state->getValue('email');
     $type = $form_state->getValue('type');
-    $technology = $form_state->getValue('type') == 'Backend' ? $form_state->getValue('technology_backend') : $form_state->getValue('technology_frontend');
+    $technology = $form_state->getValue('type') == 'Backend' ? $form_state->getValue('technology_backend') :
+      $form_state->getValue('technology_frontend');
     $message = $form_state->getValue('message');
+    $timestamp = \Drupal::time()->getRequestTime();
 
     //save all date to database
     $this->database->insert('job_applications')
@@ -155,6 +158,7 @@ final class JobApplicationForm extends FormBase {
         'type' => $type,
         'technology' => $technology,
         'message' => $message,
+        'created' => $timestamp,
       ])
       ->execute();
 
@@ -163,16 +167,19 @@ final class JobApplicationForm extends FormBase {
     $site_mail = $site_config->get('mail');
 
     $langcode = \Drupal::currentUser()->getPreferredLangcode();
+    $formatted_timestamp = \Drupal::service('date.formatter')->format($timestamp, 'custom', 'Y-m-d H:i:s');
 
     //Send data to main site email
     $params = [
       'subject' => 'New Job Application',
-      'body' => $this->t('A new job application has been submitted.<br> Details: <br>Name: @name <br>Email: @email <br>Type: @type <br>Technology: @technology <br>Message: @message', [
+      'body' => $this->t('A new job application has been submitted.<br> Details: <br>Name: @name
+<br>Email: @email <br>Type: @type <br>Technology: @technology <br>Message: @message <br>Sent: @created', [
         '@name' => $name,
         '@email' => $email,
         '@type' => $type,
         '@technology' => $technology,
         '@message' => $message,
+        '@created' => $formatted_timestamp,
       ]),
     ];
 
