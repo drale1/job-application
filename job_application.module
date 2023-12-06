@@ -2,10 +2,10 @@
 
   use Drupal\job_application\Controller\SendEmailsController;
 
-/**
- * @file
- * Primary module hooks for Job application module.
- */
+  /**
+   * @file
+   * Primary module hooks for Job application module.
+   */
 
   /**
    * Implements hook_schema().
@@ -73,8 +73,13 @@
         break;
 
       case 'job_application_weekly_news_for_applicants':
-        $message['subject'] = isset($params['subject']) ? $params['subject'] : '';
-        $message['body'][] = isset($params['body']) ? $params['body'] : '';
+        $config = \Drupal::config('job_application.settings');
+        $subject = $config->get('email_title');
+        $body = $config->get('email_body');
+
+        $message['subject'] = $subject;
+        $message['body'][] = $body;
+        break;
     }
   }
 
@@ -84,12 +89,34 @@
 
   function job_application_cron()
   {
+
     $current_day = date('l');
     $current_hour = date('H');
 
     if ($current_day === 'Monday' && $current_hour === '08') {
-      $controller = new SendEmailsController;
-      $controller->sendEmails();
+
+      $oneWeekAgo = strtotime('-7 days');
+      $query = \Drupal::database()->select('job_applications', 'ja');
+      $query->fields('ja', ['mail', 'created']);
+      $query->condition('ja.created', $oneWeekAgo, '>=');
+      $email_addresses = $query->execute()->fetchAll();
+
+      $queue = \Drupal::queue('job_application_sending_weekly_emails');
+
+      foreach ($email_addresses as $email) {
+        $data = ['to' => $email];
+        $queue->createItem($data);
+      }
     }
   }
+
+
+
+
+
+
+
+
+
+
 
