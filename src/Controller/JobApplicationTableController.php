@@ -28,9 +28,7 @@
       );
     }
 
-    /**
-     * Display the Job Applications table with pagination and sorting.
-     */
+    //Display the Job Applications table with pagination and sorting.
     public function content()
     {
       $header = [

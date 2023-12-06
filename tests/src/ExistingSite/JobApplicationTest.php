@@ -17,6 +17,7 @@
 
     public function testJobApplication()
     {
+      //Filling application form
       $this->drupalGet('/job-application/form');
       $page = $this->getCurrentPage();
       $page->fillField('name', 'Name Surname');
@@ -47,6 +48,7 @@
       $technology = $results[0]->technology;
       $message = $results[0]->message;
 
+      //Test every field against db
       $this->assertEquals('Name Surname', $name, 'Name from DB is not correct');
       $this->assertEquals('mail@email.com', $mail, 'Email from DB is not correct');
       $this->assertEquals('Backend', $type, 'Type from DB is not correct');
