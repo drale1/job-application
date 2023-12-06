@@ -21,4 +21,3 @@ job_application.email_send_settings:
     _form: 'Drupal\job_application\Form\EmailSendSettingsForm'
   requirements:
     _permission: 'administer job application'
-

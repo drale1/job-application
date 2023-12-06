@@ -166,7 +166,6 @@ final class JobApplicationForm extends FormBase {
     $site_config = \Drupal::config('system.site');
     $site_mail = $site_config->get('mail');
 
-    $langcode = \Drupal::currentUser()->getPreferredLangcode();
     $formatted_timestamp = \Drupal::service('date.formatter')->format($timestamp, 'custom', 'Y-m-d H:i:s');
 
     //Send data to main site email
@@ -183,7 +182,7 @@ final class JobApplicationForm extends FormBase {
       ]),
     ];
 
-    $this->mailManager->mail('job_application', 'job_application_submission', $site_mail, $langcode, $params);
+    $this->mailManager->mail('job_application', 'job_application_submission', $site_mail, 'en', $params);
 
     $this->messenger()->addStatus($this->t('The job application has been sent.'));
     $form_state->setRedirect('<front>');
