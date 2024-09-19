@@ -1,0 +1,12 @@
+services:
+  job_application.job_application_service:
+    class: 'Drupal\job_application\Service\JobApplicationService'
+    arguments: ['@database', '@date.formatter']
+
+  job_application.job_application_email_service:
+    class: 'Drupal\job_application\Service\JobApplicationEmailService'
+    arguments: ['@database', '@plugin.manager.mail', '@config.factory']
+
+  job_application.job_application_form_service:
+    class: 'Drupal\job_application\Service\JobApplicationFormService'
+    arguments: ['@database', '@plugin.manager.mail', '@date.formatter', '@config.factory', '@messenger', '@datetime.time']

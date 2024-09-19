@@ -3,34 +3,28 @@
   namespace Drupal\job_application\Controller;
 
   use Drupal\Core\Controller\ControllerBase;
-  use Drupal\Core\Database\Connection;
   use Symfony\Component\DependencyInjection\ContainerInterface;
-  use Drupal\Core\Database\Query\PagerSelectExtender;
-  use Drupal\Core\Database\Query\TableSortExtender;
+  use Drupal\job_application\Service\JobApplicationService;
 
   /**
    * Controller for the Job Applications table.
    */
-  class JobApplicationTableController extends ControllerBase
-  {
+  class JobApplicationTableController extends ControllerBase {
 
-    protected $database;
+    protected $jobApplicationService;
 
-    public function __construct(Connection $database)
-    {
-      $this->database = $database;
+    public function __construct(JobApplicationService $jobApplicationService) {
+      $this->jobApplicationService = $jobApplicationService;
     }
 
-    public static function create(ContainerInterface $container)
-    {
+    public static function create(ContainerInterface $container) {
       return new static(
-        $container->get('database')
+        $container->get('job_application.job_application_service')
       );
     }
 
     //Display the Job Applications table with pagination and sorting.
-    public function content()
-    {
+    public function content() {
       $header = [
         'id' => [
           'data' => $this->t('Id'),
@@ -60,24 +54,8 @@
         ],
       ];
 
-      $query = $this->database->select('job_applications', 'ja')
-        ->fields('ja')
-        ->extend(TableSortExtender::class)
-        ->orderByHeader($header)
-        ->extend(PagerSelectExtender::class)
-        ->limit(5);
-
-      $result = $query->execute();
-
-      $rows = [];
-      foreach ($result as $row) {
-        $row = (array) $row;
-
-        // Format the created timestamp to a readable date-time format
-        $row['created'] = \Drupal::service('date.formatter')->format($row['created'], 'custom', 'Y-m-d H:i:s');
-
-        $rows[] = $row;
-      }
+      // Use the service to get job applications data
+      $rows = $this->jobApplicationService->getJobApplications($header, 5);
 
       $form['table'] = [
         '#theme' => 'table',
